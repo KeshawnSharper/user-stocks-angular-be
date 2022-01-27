@@ -169,16 +169,26 @@ app.post("/sync_user_to_bank_account",async(req,res) => {
 })
 app.get('/link_with_transactions/:accessToken',async(req,res) => {
   let creds =  {"access_token":req.params.accessToken,start_date: '2018-01-01',end_date: '2022-01-27'}
-  let transactions = await plaidClient.transactionsGet(creds)
-  
+  try {
+    //listing messages in users mailbox 
+    let transactions = await plaidClient.transactionsGet(creds)
     transactions = transactions.data.transactions;
     res.send(transactions)
+    } catch (err) {
+      res.send(err)
+    }
+  
 })
 app.get('/link_with_balance/:accessToken',async(req,res) => {
   let creds =  {"access_token":req.params.accessToken}
-  let response = await plaidClient.accountsBalanceGet(creds)
-  const accounts = response.data.accounts; 
+    try {
+      //listing messages in users mailbox 
+      let response = await plaidClient.accountsBalanceGet(creds)
+      const accounts = response.data.accounts; 
     res.send(accounts)
+      } catch (err) {
+        res.send(err)
+      }
 })
 app.get('/user_transactions/:user_id',async(req,res) => {
     let user_transactions = await scanDB("cpa_user_transactions",Number(req.params.user_id),"user_id")
