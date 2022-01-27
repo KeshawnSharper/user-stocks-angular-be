@@ -169,27 +169,14 @@ app.post("/sync_user_to_bank_account",async(req,res) => {
 })
 app.get('/link_with_transactions/:accessToken',async(req,res) => {
   let creds =  {"access_token":req.params.accessToken,start_date: '2018-01-01',end_date: '2022-01-27'}
-  let transactions = await plaidClient.transactionsGet(creds).catch(async(err) => {
-    data = err
-    while (data.response.data.error_message === 'PRODUCT_NOT_READY'){
-      data  = await plaidClient.transactionsGet(creds)
-      .then(transactions => res.send(transactions.data.transactions))
-      .catch(err => data = err.response.data.error_message)
-    }
-  })
+  let transactions = await plaidClient.transactionsGet(creds)
+  
     transactions = transactions.data.transactions;
     res.send(transactions)
 })
 app.get('/link_with_balance/:accessToken',async(req,res) => {
   let creds =  {"access_token":req.params.accessToken}
-  let response = await plaidClient.accountsBalanceGet(creds).catch(async(err) => {
-    data = err
-    while (data.response.data.error_message === 'PRODUCT_NOT_READY'){
-      data  = await plaidClient.accountsBalanceGet((creds)
-      .then(accounts => res.send(accounts.data.accounts))
-      .catch(err => data = err.response.data.error_message))
-    }
-  })
+  let response = await plaidClient.accountsBalanceGet(creds)
   const accounts = response.data.accounts; 
     res.send(accounts)
 })
